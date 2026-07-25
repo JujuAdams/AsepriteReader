@@ -1,0 +1,1 @@
+asepriteFile = AsepriteImport("test.aseprite");

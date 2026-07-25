@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"AsepriteImport",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"AsepriteImport",
+  "parent":{
+    "name":"Aseprite",
+    "path":"folders/Aseprite.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
