@@ -10,12 +10,12 @@ function __AsepriteClassFile() constructor
         fixedGamma: 1, //Linear sRGB
     };
     
-    layerArray  = [];
-    tagDict     = {};
-    tagArray    = [];
-    sliceArray  = [];
-    framesArray = [];
-    hasUUIDs    = false;
+    layerArray = [];
+    tagDict    = {};
+    tagArray   = [];
+    sliceArray = [];
+    frameArray = [];
+    hasUUIDs   = false;
     
     paletteArray     = array_create(256, 0x00000000);
     paletteNameArray = array_create(256, undefined);
@@ -39,32 +39,155 @@ function __AsepriteClassFile() constructor
     
     static GetFrameCount = function()
     {
-        return array_length(framesArray);
+        return array_length(frameArray);
     }
     
     static Draw = function(_image, _x, _y)
     {
-        framesArray[max(0, _image) mod array_length(framesArray)].Draw(_x, _y);
+        frameArray[max(0, _image) mod array_length(frameArray)].Draw(_x, _y);
+    }
+    
+    static DrawTag = function(_tagName, _image, _x, _y)
+    {
+        with(tagDict[$ _tagName])
+        {
+            other.Draw((_image mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y);
+        }
     }
     
     static DrawExt = function(_image, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
     {
-        framesArray[max(0, _image) mod array_length(framesArray)].DrawExt(_x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+        frameArray[max(0, _image) mod array_length(frameArray)].DrawExt(_x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+    }
+    
+    static DrawTagExt = function(_tagName, _image, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
+    {
+        with(tagDict[$ _tagName])
+        {
+            other.DrawExt((_image mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+        }
+    }
+    
+    static HideLayerByIndex = function(_index)
+    {
+        with(layerArray[_index])
+        {
+            flags = ~((~flags) | 0b0001);
+        }
+    }
+    
+    static HideLayersByMask = function(_mask)
+    {
+        var _layerArray = layerArray;
+        var _i = array_length(_layerArray)-1;
+        repeat(array_length(_layerArray))
+        {
+            if (__AsepriteTestStringMask(_layerArray[_i].name, _mask))
+            {
+                HideLayerByIndex(_i);
+            }
+            
+            --_i;
+        }
+    }
+    
+    static DeleteTagsByMask = function(_mask)
+    {
+        var _tagArray = tagArray;
+        
+        var _i = array_length(_tagArray)-1;
+        repeat(array_length(_tagArray))
+        {
+            if (__AsepriteTestStringMask(_tagArray[_i].name, _mask))
+            {
+                array_delete(_tagArray, _i, 1);
+            }
+            
+            --_i;
+        }
+    }
+    
+    static GetTagFrames = function(_tagName)
+    {
+        var _output = [];
+        
+        var _tagStruct = tagDict[$ _tagName];
+        if (_tagStruct == undefined)
+        {
+            __AsepriteTrace($"Tag \"{_tagName}\" not recognized");
+            return _output;
+        }
+        
+        var _i = _tagStruct.fromFrame;
+        repeat(1 + _tagStruct.toFrame - _i)
+        {
+            array_push(_output, frameArray[_i]);
+            ++_i;
+        }
+        
+        return _output;
+    }
+    
+    static Render = function(_keepSurfaces = true)
+    {
+        var _i = 0;
+        repeat(array_length(frameArray))
+        {
+            frameArray[_i].__Render(paletteArray, transparentIndex, _keepSurfaces);
+            ++_i;
+        }
+    }
+    
+    static SaveAllFrames = function(_pathPattern)
+    {
+        if (string_pos("#", _pathPattern) <= 0)
+        {
+            _pathPattern = filename_change_ext(_pathPattern, "#" + filename_ext(_pathPattern));
+        }
+        
+        var _i = 0;
+        repeat(array_length(frameArray))
+        {
+            frameArray[_i].SaveAs(string_replace_all(_pathPattern, "#", _i));
+            ++_i;
+        }
+    }
+    
+    static SaveTag = function(_tagName, _pathPattern)
+    {
+        var _tagStruct = tagDict[$ _tagName];
+        if (_tagStruct == undefined)
+        {
+            __AsepriteError($"Tag \"{_tagName}\" not recognized");
+        }
+        
+        if (string_pos("#", _pathPattern) <= 0)
+        {
+            _pathPattern = filename_change_ext(_pathPattern, "#" + filename_ext(_pathPattern));
+        }
+        
+        var _fromFrame = _tagStruct.fromFrame;
+        var _i = 0;
+        repeat(1 + _tagStruct.toFrame - _fromFrame)
+        {
+            frameArray[_i + _fromFrame].SaveAs(string_replace_all(_pathPattern, "#", _i));
+            ++_i;
+        }
     }
     
     static Destroy = function()
     {
         var _i = 0;
-        repeat(array_length(framesArray))
+        repeat(array_length(frameArray))
         {
-            framesArray[_i].__Destroy();
+            frameArray[_i].__Destroy();
             ++_i;
         }
     }
     
     
     
-    static __Deserialize = function(_buffer, _keepSurfaces)
+    static __Deserialize = function(_buffer)
     {
         _system.__writePaletteIndex  = 0;
         _system.__userDataToTagIndex = 0;
@@ -81,7 +204,7 @@ function __AsepriteClassFile() constructor
             __AsepriteError($"Magic number check failed; got 0x{string_delete(string(ptr(_magicNumber)), 1, 12)}, expecting 0xA5E0");
         }
         
-        array_resize(framesArray, buffer_read(_buffer, buffer_u16));
+        array_resize(frameArray, buffer_read(_buffer, buffer_u16));
         width      = buffer_read(_buffer, buffer_u16);
         height     = buffer_read(_buffer, buffer_u16);
         colorDepth = buffer_read(_buffer, buffer_u16);
@@ -114,22 +237,15 @@ function __AsepriteClassFile() constructor
         buffer_seek(_buffer, buffer_seek_relative, 84); //Reserved
         
         var _i = 0;
-        repeat(array_length(framesArray))
+        repeat(array_length(frameArray))
         {
-            framesArray[@ _i] = (new __AsepriteClassFrame()).__Deserialize(_buffer, self);
+            frameArray[@ _i] = (new __AsepriteClassFrame()).__Deserialize(_buffer, self);
             ++_i;
         }
         
         if (colorDepth == 8)
         {
             paletteArray[@ transparentIndex] &= 0x00_FFFFFF;
-        }
-        
-        var _i = 0;
-        repeat(array_length(framesArray))
-        {
-            framesArray[_i].__Flatten(self, paletteArray, transparentIndex, _keepSurfaces);
-            ++_i;
         }
         
         return self;

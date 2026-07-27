@@ -2,10 +2,11 @@ function __AsepriteClassFrame() constructor
 {
     static _system = __AsepriteSystem();
     
+    fileStruct = undefined;
+    
     duration = 66.666;
     
     celArray = [];
-    orderedCelArray = [];
     buffer = undefined;
     
     __surface = undefined;
@@ -21,8 +22,18 @@ function __AsepriteClassFrame() constructor
     {
         if (not surface_exists(__surface))
         {
-            __surface = surface_create(width, height);
-            buffer_set_surface(buffer, __surface, 0);
+            __surface = surface_create(fileStruct.width, fileStruct.height);
+            
+            if (buffer_exists(fileStruct))
+            {
+                buffer_set_surface(buffer, __surface, 0);
+            }
+            else
+            {
+                surface_set_target(__surface);
+                draw_clear_alpha(c_black, 0);
+                surface_reset_target();
+            }
         }
         
         return __surface;
@@ -40,10 +51,15 @@ function __AsepriteClassFrame() constructor
     
     
     
+    static SaveAs = function(_path)
+    {
+        surface_save(GetSurface(), _path);
+    }
+    
     static __Destroy = function()
     {
         var _i = 0;
-        repeat(array_length(framesArray))
+        repeat(array_length(frameArray))
         {
             celArray[_i].__Destroy();
             ++_i;
@@ -62,19 +78,19 @@ function __AsepriteClassFrame() constructor
         }
     }
     
-    static __Flatten = function(_fileStruct, _paletteArray, _transparentIndex, _keepSurfaces)
+    static __Render = function(_paletteArray, _transparentIndex, _keepSurfaces)
     {
-        var _width      = _fileStruct.width;
-        var _height     = _fileStruct.height;
-        var _layerArray = _fileStruct.layerArray;
+        var _width      = fileStruct.width;
+        var _height     = fileStruct.height;
+        var _layerArray = fileStruct.layerArray;
         
         var _surface = surface_create(_width, _height);
         surface_set_target(_surface);
         draw_clear_alpha(c_black, 0); //TODO - Apply background colour
         surface_reset_target();
         
-        orderedCelArray = variable_clone(celArray, 0);
-        array_sort(orderedCelArray, function(_a, _b)
+        var _orderedCelArray = variable_clone(celArray, 0);
+        array_sort(_orderedCelArray, function(_a, _b)
         {
             if (_a.order != _b.order)
             {
@@ -87,9 +103,9 @@ function __AsepriteClassFrame() constructor
         });
         
         var _i = 0;
-        repeat(array_length(orderedCelArray))
+        repeat(array_length(_orderedCelArray))
         {
-            orderedCelArray[_i].__Flatten(_surface, _layerArray, _paletteArray, _transparentIndex, _keepSurfaces);
+            _orderedCelArray[_i].__Render(_surface, _layerArray, _paletteArray, _transparentIndex, _keepSurfaces);
             ++_i;
         }
         
@@ -108,9 +124,11 @@ function __AsepriteClassFrame() constructor
     
     static __Deserialize = function(_buffer, _fileStruct)
     {
-        var _hasUUIDs         = _fileStruct.hasUUIDs;
-        var _paletteArray     = _fileStruct.paletteArray;
-        var _paletteNameArray = _fileStruct.paletteNameArray;
+        fileStruct = _fileStruct;
+        
+        var _hasUUIDs         = fileStruct.hasUUIDs;
+        var _paletteArray     = fileStruct.paletteArray;
+        var _paletteNameArray = fileStruct.paletteNameArray;
         
         var _frameStart = buffer_tell(_buffer);
         var _frameSize = buffer_read(_buffer, buffer_u32);
@@ -294,7 +312,7 @@ function __AsepriteClassFrame() constructor
                     
                     repeat(_tagCount)
                     {
-                        var _tagStruct = (new __AsepriteClassTag()).__Deserialize(_buffer);
+                        var _tagStruct = (new __AsepriteClassTag()).__Deserialize(_buffer, self);
                         
                         array_push(_fileStruct.tagArray, _tagStruct);
                         _fileStruct.tagDict[$ _tagStruct.name] = _tagStruct;

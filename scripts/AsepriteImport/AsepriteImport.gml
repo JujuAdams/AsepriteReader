@@ -1,4 +1,4 @@
-function AsepriteImport(_filename, _keepSurfaces = true)
+function AsepriteImport(_filename)
 {
     if (not file_exists(_filename))
     {
@@ -11,5 +11,5 @@ function AsepriteImport(_filename, _keepSurfaces = true)
         __AsepriteError($"Failed to load \"{_filename}\"");
     }
     
-    return (new __AsepriteClassFile()).__Deserialize(_buffer, _keepSurfaces);
+    return (new __AsepriteClassFile()).__Deserialize(_buffer);
 }

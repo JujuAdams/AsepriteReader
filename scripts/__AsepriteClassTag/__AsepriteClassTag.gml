@@ -8,7 +8,7 @@ function __AsepriteClassTag() constructor
     repeats       = undefined;
     name          = undefined;
     
-    static __Deserialize = function(_buffer)
+    static __Deserialize = function(_buffer, _fileStruct)
     {
         fromFrame     = buffer_read(_buffer, buffer_u16);
         toFrame       = buffer_read(_buffer, buffer_u16);

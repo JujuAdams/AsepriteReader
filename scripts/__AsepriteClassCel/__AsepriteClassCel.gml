@@ -62,7 +62,7 @@ function __AsepriteClassCel() constructor
         }
     }
     
-    static __Flatten = function(_frameSurface, _layerArray, _paletteArray, _transparentIndex, _keepSurfaces)
+    static __Render = function(_frameSurface, _layerArray, _paletteArray, _transparentIndex, _keepSurfaces)
     {
         if (__tempBufferDirty)
         {
