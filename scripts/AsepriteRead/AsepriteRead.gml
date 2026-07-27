@@ -88,7 +88,7 @@
 /// `.userData`
 /// `.grid`
 
-function AsepriteImport(_filename)
+function AsepriteRead(_filename)
 {
     if (not file_exists(_filename))
     {

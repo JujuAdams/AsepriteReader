@@ -17,8 +17,8 @@
   ],
   "name":"rMain",
   "parent":{
-    "name":"Aseprite Importer",
-    "path":"Aseprite Importer.yyp",
+    "name":"Aseprite Reader",
+    "path":"Aseprite Reader.yyp",
   },
   "parentRoom":null,
   "physicsSettings":{

@@ -9,8 +9,8 @@
   "name":"oTest",
   "overriddenProperties":[],
   "parent":{
-    "name":"Aseprite Importer",
-    "path":"Aseprite Importer.yyp",
+    "name":"Aseprite Reader",
+    "path":"Aseprite Reader.yyp",
   },
   "parentObjectId":null,
   "persistent":false,

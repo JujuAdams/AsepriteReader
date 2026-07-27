@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"AsepriteImport",
+  "%Name":"AsepriteRead",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AsepriteImport",
+  "name":"AsepriteRead",
   "parent":{
     "name":"Aseprite",
     "path":"folders/Aseprite.yy",

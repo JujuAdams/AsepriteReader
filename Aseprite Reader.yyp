@@ -1,6 +1,6 @@
 {
   "$GMProject":"v1",
-  "%Name":"Aseprite Importer",
+  "%Name":"Aseprite Reader",
   "AudioGroups":[
     {"$GMAudioGroup":"v1","%Name":"audiogroup_default","exportDir":"","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
   ],
@@ -22,7 +22,7 @@
   "MetaData":{
     "IDEVersion":"2026.0.0.16",
   },
-  "name":"Aseprite Importer",
+  "name":"Aseprite Reader",
   "resources":[
     {"id":{"name":"oTest","path":"objects/oTest/oTest.yy",},},
     {"id":{"name":"rMain","path":"rooms/rMain/rMain.yy",},},
@@ -52,7 +52,7 @@
     {"id":{"name":"__AsepriteSystem","path":"scripts/__AsepriteSystem/__AsepriteSystem.yy",},},
     {"id":{"name":"__AsepriteTestStringMask","path":"scripts/__AsepriteTestStringMask/__AsepriteTestStringMask.yy",},},
     {"id":{"name":"__AsepriteTrace","path":"scripts/__AsepriteTrace/__AsepriteTrace.yy",},},
-    {"id":{"name":"AsepriteImport","path":"scripts/AsepriteImport/AsepriteImport.yy",},},
+    {"id":{"name":"AsepriteRead","path":"scripts/AsepriteRead/AsepriteRead.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
