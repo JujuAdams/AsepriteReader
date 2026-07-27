@@ -120,7 +120,10 @@ function __AsepriteClassFile() constructor
             ++_i;
         }
         
-        paletteArray[@ transparentIndex] &= 0x00_FFFFFF;
+        if (colorDepth == 8)
+        {
+            paletteArray[@ transparentIndex] &= 0x00_FFFFFF;
+        }
         
         var _i = 0;
         repeat(array_length(framesArray))
