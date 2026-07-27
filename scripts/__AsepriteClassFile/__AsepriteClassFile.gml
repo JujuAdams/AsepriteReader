@@ -1,8 +1,39 @@
-// https://github.com/aseprite/aseprite/blob/main/docs/ase-file-specs.md
+/// The constructed struct has the following public methods:
+/// `.Destroy()`
+/// `.Render([keepSurfaces=true])`
+/// `.Draw(frame, x, y)`
+/// `.DrawExt(frame, x, y, xScale, yScale, angle, blend, alpha)`
+/// `.DrawTag(tagName, frame, x, y)`
+/// `.DrawTagExt(tagName, frame, x, y, xScale, yScale, angle, blend, alpha)`
+/// `.HideLayersByMask(mask)`
+/// `.DeleteTagsByMask(mask)`
+/// `.GetTagFrames(tagName)`
+/// `.SaveAllFrames(pathPattern)`
+/// `.SaveTag(tagName, pathPattern)`
+/// 
+/// The constructed struct has the following public read-only variables:
+/// `.width`
+/// `.height`
+/// `.colorProfile`
+/// `.layerArray`
+/// `.tagDict`
+/// `.tagArray`
+/// `.sliceArray`
+/// `.frameArray`
+/// `.hasUUIDs`
+/// `.paletteArray`
+/// `.paletteNameArray`
+/// `.colorDepth`
+/// `.pixelRatio`
+/// `.userData`
+/// `.grid`
 
 function __AsepriteClassFile() constructor
 {
     static _system = __AsepriteSystem();
+    
+    width  = undefined;
+    height = undefined;
     
     colorProfile = {
         type: 1, //Default to sRGB
@@ -20,8 +51,6 @@ function __AsepriteClassFile() constructor
     paletteArray     = array_create(256, 0x00000000);
     paletteNameArray = array_create(256, undefined);
     
-    width      = undefined;
-    height     = undefined;
     colorDepth = undefined;
     pixelRatio = 1;
     
@@ -37,42 +66,29 @@ function __AsepriteClassFile() constructor
     
     
     
-    static GetFrameCount = function()
+    static Draw = function(_frame, _x, _y)
     {
-        return array_length(frameArray);
+        frameArray[max(0, _frame) mod array_length(frameArray)].Draw(_x, _y);
     }
     
-    static Draw = function(_image, _x, _y)
-    {
-        frameArray[max(0, _image) mod array_length(frameArray)].Draw(_x, _y);
-    }
-    
-    static DrawTag = function(_tagName, _image, _x, _y)
+    static DrawTag = function(_tagName, _frame, _x, _y)
     {
         with(tagDict[$ _tagName])
         {
-            other.Draw((_image mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y);
+            other.Draw((_frame mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y);
         }
     }
     
-    static DrawExt = function(_image, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
+    static DrawExt = function(_frame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
     {
-        frameArray[max(0, _image) mod array_length(frameArray)].DrawExt(_x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+        frameArray[max(0, _frame) mod array_length(frameArray)].DrawExt(_x, _y, _xScale, _yScale, _angle, _blend, _alpha);
     }
     
-    static DrawTagExt = function(_tagName, _image, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
+    static DrawTagExt = function(_tagName, _frame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
     {
         with(tagDict[$ _tagName])
         {
-            other.DrawExt((_image mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
-        }
-    }
-    
-    static HideLayerByIndex = function(_index)
-    {
-        with(layerArray[_index])
-        {
-            flags = ~((~flags) | 0b0001);
+            other.DrawExt((_frame mod (1 + toFrame - fromFrame)) + fromFrame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
         }
     }
     
@@ -84,7 +100,7 @@ function __AsepriteClassFile() constructor
         {
             if (__AsepriteTestStringMask(_layerArray[_i].name, _mask))
             {
-                HideLayerByIndex(_i);
+                _layerArray[_i].Hide();
             }
             
             --_i;

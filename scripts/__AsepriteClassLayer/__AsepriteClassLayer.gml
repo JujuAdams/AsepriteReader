@@ -1,6 +1,25 @@
+/// The constructed struct has the following public methods:
+/// `.Hide()`
+/// 
+/// The constructed struct has the following public read-only variables:
+/// `.userData`
+/// `.flags`
+/// `.type`
+/// `.childLevel`
+/// `.blendMode`
+/// `.opacity`
+/// `.name`
+/// `.tilesetIndex`
+/// `.uuid`
+
 function __AsepriteClassLayer() constructor
 {
     userData = undefined;
+    
+    static Hide = function()
+    {
+        flags = ~((~flags) | 0b0001);
+    }
     
     static __Deserialize = function(_buffer, _hasUUIDs)
     {

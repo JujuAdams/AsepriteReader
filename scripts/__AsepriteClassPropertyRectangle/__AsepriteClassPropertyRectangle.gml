@@ -1,3 +1,11 @@
+/// The constructed struct has the following public read-only variables:
+/// `.x`
+/// `.y`
+/// `.width`
+/// `.height`
+/// 
+/// 
+/// 
 /// @param x
 /// @param y
 /// @param width

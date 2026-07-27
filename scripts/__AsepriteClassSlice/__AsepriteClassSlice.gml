@@ -1,3 +1,9 @@
+/// The constructed struct has the following public read-only variables:
+/// `.name`
+/// `.flags`
+/// `.keyArray`
+/// `.userData`
+
 function __AsepriteClassSlice() constructor
 {
     name  = undefined;

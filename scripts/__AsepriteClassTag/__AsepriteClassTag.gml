@@ -1,3 +1,11 @@
+/// The constructed struct has the following public read-only variables:
+/// `.userData`
+/// `.fromFrame`
+/// `.toFrame`
+/// `.loopDirection`
+/// `.repeats`
+/// `.name`
+
 function __AsepriteClassTag() constructor
 {
     userData = undefined;

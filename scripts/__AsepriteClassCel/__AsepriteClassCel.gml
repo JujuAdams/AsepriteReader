@@ -1,3 +1,24 @@
+/// The constructed struct has the following public methods:
+/// `.GetSurface()`
+/// 
+/// The constructed struct has the following public read-only variables:
+/// `.userData`
+/// `.layerIndex`
+/// `.x`
+/// `.y`
+/// `.opacity`
+/// `.type`
+/// `.zIndex`
+/// `.width`
+/// `.height`
+/// `.buffer`
+/// `.order`
+/// `.flags`
+/// `.xPrecise`
+/// `.yPrecise`
+/// `.widthPrecise`
+/// `.heightPrecise`
+
 function __AsepriteClassCel() constructor
 {
     static _system = __AsepriteSystem();
@@ -14,7 +35,6 @@ function __AsepriteClassCel() constructor
     height     = undefined;
     buffer     = undefined;
     order      = undefined;
-    buffer     = undefined;
     
     flags         = 0;
     xPrecise      = undefined;

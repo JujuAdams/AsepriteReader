@@ -1,3 +1,16 @@
+/// The constructed struct has the following public read-only variables:
+/// `.frameStart`
+/// `.xOrigin`
+/// `.yOrigin`
+/// `.width`
+/// `.height`
+/// `.xCenter`
+/// `.yCenter`
+/// `.centerWidth`
+/// `.centerHeight`
+/// `.xPivot`
+/// `.yPivot`
+
 function __AsepriteClassSliceKey() constructor
 {
     frameStart   = undefined;

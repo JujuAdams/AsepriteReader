@@ -1,3 +1,8 @@
+/// The constructed struct has the following public read-only variables:
+/// `.name`
+/// `.color`
+/// `.propertyMaps`
+
 function __AsepriteClassUserData() constructor
 {
     name         = undefined;

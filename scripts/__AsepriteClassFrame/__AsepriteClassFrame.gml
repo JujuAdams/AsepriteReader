@@ -1,8 +1,19 @@
+/// The constructed struct has the following public methods:
+/// `.GetSurface()`
+/// `.Draw(x, y)`
+/// `.DrawExt(x, y, xScale, yScale, angle, blend, alpha)`
+/// `.SaveAs(path)`
+/// 
+/// The constructed struct has the following public read-only variables:
+/// `.duration`
+/// `.celArray`
+/// `.buffer`
+
 function __AsepriteClassFrame() constructor
 {
     static _system = __AsepriteSystem();
     
-    fileStruct = undefined;
+    __fileStruct = undefined;
     
     duration = 66.666;
     
@@ -13,18 +24,13 @@ function __AsepriteClassFrame() constructor
     
     
     
-    static GetBuffer = function()
-    {
-        return buffer;
-    }
-    
     static GetSurface = function()
     {
         if (not surface_exists(__surface))
         {
-            __surface = surface_create(fileStruct.width, fileStruct.height);
+            __surface = surface_create(__fileStruct.width, __fileStruct.height);
             
-            if (buffer_exists(fileStruct))
+            if (buffer_exists(__fileStruct))
             {
                 buffer_set_surface(buffer, __surface, 0);
             }
@@ -49,12 +55,12 @@ function __AsepriteClassFrame() constructor
         draw_surface_ext(GetSurface(), _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
     }
     
-    
-    
     static SaveAs = function(_path)
     {
         surface_save(GetSurface(), _path);
     }
+    
+    
     
     static __Destroy = function()
     {
@@ -80,9 +86,9 @@ function __AsepriteClassFrame() constructor
     
     static __Render = function(_paletteArray, _transparentIndex, _keepSurfaces)
     {
-        var _width      = fileStruct.width;
-        var _height     = fileStruct.height;
-        var _layerArray = fileStruct.layerArray;
+        var _width      = __fileStruct.width;
+        var _height     = __fileStruct.height;
+        var _layerArray = __fileStruct.layerArray;
         
         var _surface = surface_create(_width, _height);
         surface_set_target(_surface);
@@ -124,11 +130,11 @@ function __AsepriteClassFrame() constructor
     
     static __Deserialize = function(_buffer, _fileStruct)
     {
-        fileStruct = _fileStruct;
+        __fileStruct = _fileStruct;
         
-        var _hasUUIDs         = fileStruct.hasUUIDs;
-        var _paletteArray     = fileStruct.paletteArray;
-        var _paletteNameArray = fileStruct.paletteNameArray;
+        var _hasUUIDs         = __fileStruct.hasUUIDs;
+        var _paletteArray     = __fileStruct.paletteArray;
+        var _paletteNameArray = __fileStruct.paletteNameArray;
         
         var _frameStart = buffer_tell(_buffer);
         var _frameSize = buffer_read(_buffer, buffer_u32);

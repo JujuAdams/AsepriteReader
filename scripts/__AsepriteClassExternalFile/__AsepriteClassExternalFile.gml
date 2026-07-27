@@ -1,3 +1,8 @@
+/// The constructed struct has the following public read-only variables:
+/// `.entryID`
+/// `.type`
+/// `.name`
+
 function __AsepriteClassExternalFile() constructor
 {
     static __Deserialize = function(_buffer)
