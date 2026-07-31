@@ -50,9 +50,19 @@ function __AsepriteClassFrame() constructor
         draw_surface(GetSurface(), _x, _y);
     }
     
+    static DrawPart = function(_left, _top, _width, _height, _x, _y)
+    {
+        draw_surface_part(GetSurface(), _left, _top, _width, _height, _x, _y);
+    }
+    
     static DrawExt = function(_x, _y, _xScale, _yScale, _angle, _blend, _alpha)
     {
         draw_surface_ext(GetSurface(), _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+    }
+    
+    static DrawPartExt = function(_left, _top, _width, _height, _x, _y, _xScale, _yScale, _blend, _alpha)
+    {
+        draw_surface_part_ext(GetSurface(), _left, _top, _width, _height, _x, _y, _xScale, _yScale, _blend, _alpha);
     }
     
     static SaveAs = function(_path)
@@ -378,6 +388,7 @@ function __AsepriteClassFrame() constructor
                 case 0x2022: //Slice chunk
                     var _sliceStruct = (new __AsepriteClassSlice()).__Deserialize(_buffer);
                     array_push(_fileStruct.sliceArray, _sliceStruct);
+                    _fileStruct.sliceDict[$ _sliceStruct.name] = _sliceStruct;
                     _userDataDestination = _sliceStruct;
                 break;
                 
