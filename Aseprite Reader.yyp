@@ -17,6 +17,7 @@
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"linkedcel.aseprite","CopyToMask":-1,"filePath":"datafiles","name":"linkedcel.aseprite","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"slice.aseprite","CopyToMask":-1,"filePath":"datafiles","name":"slice.aseprite","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"tilemap.aseprite","CopyToMask":-1,"filePath":"datafiles","name":"tilemap.aseprite","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
   ],

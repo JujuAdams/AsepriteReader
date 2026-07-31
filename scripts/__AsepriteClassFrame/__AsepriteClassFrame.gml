@@ -219,7 +219,7 @@ function __AsepriteClassFrame() constructor
                         _userDataDestination = _fileStruct;
                     }
                 break;
-            
+                
                 case 0x0011: //Old palette chunk
                     if (not _ignoreLegacyPaletteChunks)
                     {
@@ -237,7 +237,7 @@ function __AsepriteClassFrame() constructor
                                 var _red   = floor(min(63, buffer_read(_buffer, buffer_u8)) * (255/63));
                                 var _green = floor(min(63, buffer_read(_buffer, buffer_u8)) * (255/63));
                                 var _blue  = floor(min(63, buffer_read(_buffer, buffer_u8)) * (255/63));
-                            
+                                
                                 var _color = 0xFF000000 | (_blue << 16) | (_green << 8) | _red;
                                 _paletteArray[@ _writePaletteIndex++] = _color;
                             }
@@ -253,15 +253,25 @@ function __AsepriteClassFrame() constructor
                     array_push(_fileStruct.layerArray, _layerStruct);
                     _userDataDestination = _layerStruct;
                 break;
-
+                
                 case 0x2005: //Cel chunk
                     var _celStruct = (new __AsepriteClassCel()).__Deserialize(_buffer, _fileStruct, _chunkStart + _chunkSize);
+                    
+                    if (_celStruct.__linkFrame != undefined)
+                    {
+                        array_push(_fileStruct.__linkedCelArray, {
+                            __frame:      _celStruct.__linkFrame,
+                            __layerIndex: _celStruct.layerIndex,
+                            __celArray:   celArray,
+                            __celIndex:   array_length(celArray),
+                        });
+                    }
                     
                     array_push(celArray, _celStruct);
                     _userDataDestination = _celStruct;
                     _previousCelStruct = _celStruct;
                 break;
-            
+                
                 case 0x2006: //Cel extra chunk
                     if (is_struct(_previousCelStruct))
                     {
@@ -272,7 +282,7 @@ function __AsepriteClassFrame() constructor
                         __AsepriteTrace($"Warning! Saw extra cel chunk but we haven't read a normal cel chunk yet");
                     }
                 break;
-            
+                
                 case 0x2007: //Color profle chunk
                     var _colorType = buffer_read(_buffer, buffer_u16);
                     // 0 - no color profile (as in old .aseprite files)
@@ -295,7 +305,7 @@ function __AsepriteClassFrame() constructor
                     
                     _userDataDestination = _fileStruct;
                 break;
-            
+                
                 case 0x2008: //External file chunk
                     var _entriesCount = buffer_read(_buffer, buffer_u32);
                     buffer_seek(_buffer, buffer_seek_relative, 8);

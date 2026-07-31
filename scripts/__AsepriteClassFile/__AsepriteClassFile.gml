@@ -67,6 +67,8 @@ function __AsepriteClassFile() constructor
         height: 0,
     };
     
+    __linkedCelArray = [];
+    
     
     
     static Draw = function(_frame, _x, _y)
@@ -398,6 +400,40 @@ function __AsepriteClassFile() constructor
         repeat(array_length(frameArray))
         {
             frameArray[@ _i] = (new __AsepriteClassFrame()).__Deserialize(_buffer, self);
+            ++_i;
+        }
+        
+        var _i = 0;
+        repeat(array_length(__linkedCelArray))
+        {
+            var _linkData = __linkedCelArray[_i];
+            var _linkFrame    = _linkData.__frame;
+            var _linkLayer    = _linkData.__layerIndex;
+            var _linkCelArray = _linkData.__celArray;
+            var _linkCelIndex = _linkData.__celIndex;
+            
+            var _frameStruct = frameArray[_linkFrame];
+            var _frameCelArray = _frameStruct.celArray;
+            
+            var _found = false;
+            var _j = 0;
+            repeat(array_length(_frameCelArray))
+            {
+                if (_frameCelArray[_j].layerIndex == _linkLayer)
+                {
+                    _found = true;
+                    _linkCelArray[@ _linkCelIndex] = _frameCelArray[_j];
+                    break;
+                }
+                
+                ++_j;
+            }
+            
+            if (not _found)
+            {
+                __AsepriteError($"Failed to find cel link");
+            }
+            
             ++_i;
         }
         

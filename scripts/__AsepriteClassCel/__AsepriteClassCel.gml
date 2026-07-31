@@ -45,6 +45,7 @@ function __AsepriteClassCel() constructor
     tilesetDict   = undefined;
     tilemapStruct = undefined;
     
+    __linkFrame       = undefined;
     __surface         = undefined;
     __tempBuffer      = undefined;
     __tempBufferDirty = false;
@@ -205,8 +206,7 @@ function __AsepriteClassCel() constructor
         }
         else if (type == 1)
         {
-            var _linkCel = buffer_read(_fileBuffer, buffer_u16);
-            //TODO
+            __linkFrame = buffer_read(_fileBuffer, buffer_u16);
         }
         else if (type == 2)
         {
