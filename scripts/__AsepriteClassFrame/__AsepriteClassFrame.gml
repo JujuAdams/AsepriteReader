@@ -30,7 +30,7 @@ function __AsepriteClassFrame() constructor
         {
             __surface = surface_create(__fileStruct.width, __fileStruct.height);
             
-            if (buffer_exists(__fileStruct))
+            if (buffer_exists(buffer))
             {
                 buffer_set_surface(buffer, __surface, 0);
             }
@@ -58,6 +58,8 @@ function __AsepriteClassFrame() constructor
     static SaveAs = function(_path)
     {
         surface_save(GetSurface(), _path);
+        
+        return self;
     }
     
     
@@ -84,7 +86,7 @@ function __AsepriteClassFrame() constructor
         }
     }
     
-    static __Render = function(_paletteArray, _transparentIndex, _keepSurfaces)
+    static __Render = function(_paletteArray, _keepSurfaces)
     {
         var _width      = __fileStruct.width;
         var _height     = __fileStruct.height;
@@ -111,7 +113,7 @@ function __AsepriteClassFrame() constructor
         var _i = 0;
         repeat(array_length(_orderedCelArray))
         {
-            _orderedCelArray[_i].__Render(_surface, _layerArray, _paletteArray, _transparentIndex, _keepSurfaces);
+            _orderedCelArray[_i].__Render(_surface, _layerArray, _paletteArray, _keepSurfaces);
             ++_i;
         }
         
@@ -372,11 +374,18 @@ function __AsepriteClassFrame() constructor
                         __AsepriteTrace($"Warning! User data has no valid destination");
                     }
                 break;
-
+                
                 case 0x2022: //Slice chunk
                     var _sliceStruct = (new __AsepriteClassSlice()).__Deserialize(_buffer);
                     array_push(_fileStruct.sliceArray, _sliceStruct);
                     _userDataDestination = _sliceStruct;
+                break;
+                
+                case 0x2023: //Tileset chunk
+                    var _tilesetStruct = (new __AsepriteClassTileset()).__Deserialize(_buffer, _fileStruct);
+                    array_push(_fileStruct.tilesetArray, _tilesetStruct);
+                    _fileStruct.tilesetDict[$ _tilesetStruct.tilesetID] = _tilesetStruct;
+                    _userDataDestination = _tilesetStruct;
                 break;
             
                 default:

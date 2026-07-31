@@ -41,12 +41,14 @@ function __AsepriteClassFile() constructor
         fixedGamma: 1, //Linear sRGB
     };
     
-    layerArray = [];
-    tagDict    = {};
-    tagArray   = [];
-    sliceArray = [];
-    frameArray = [];
-    hasUUIDs   = false;
+    layerArray   = [];
+    tagDict      = {};
+    tagArray     = [];
+    sliceArray   = [];
+    frameArray   = [];
+    tilesetArray = [];
+    tilesetDict  = {};
+    hasUUIDs     = false;
     
     paletteArray     = array_create(256, 0x00000000);
     paletteNameArray = array_create(256, undefined);
@@ -105,6 +107,25 @@ function __AsepriteClassFile() constructor
             
             --_i;
         }
+        
+        return self;
+    }
+    
+    static ShowLayersByMask = function(_mask)
+    {
+        var _layerArray = layerArray;
+        var _i = array_length(_layerArray)-1;
+        repeat(array_length(_layerArray))
+        {
+            if (__AsepriteTestStringMask(_layerArray[_i].name, _mask))
+            {
+                _layerArray[_i].Show();
+            }
+            
+            --_i;
+        }
+        
+        return self;
     }
     
     static DeleteTagsByMask = function(_mask)
@@ -121,6 +142,8 @@ function __AsepriteClassFile() constructor
             
             --_i;
         }
+        
+        return self;
     }
     
     static GetTagFrames = function(_tagName)
@@ -147,11 +170,20 @@ function __AsepriteClassFile() constructor
     static Render = function(_keepSurfaces = true)
     {
         var _i = 0;
+        repeat(array_length(tilesetArray))
+        {
+            tilesetArray[_i].__Render(paletteArray, transparentIndex, _keepSurfaces);
+            ++_i;
+        }
+        
+        var _i = 0;
         repeat(array_length(frameArray))
         {
             frameArray[_i].__Render(paletteArray, transparentIndex, _keepSurfaces);
             ++_i;
         }
+        
+        return self;
     }
     
     static SaveAllFrames = function(_pathPattern)
@@ -167,6 +199,8 @@ function __AsepriteClassFile() constructor
             frameArray[_i].SaveAs(string_replace_all(_pathPattern, "#", _i));
             ++_i;
         }
+        
+        return self;
     }
     
     static SaveTag = function(_tagName, _pathPattern)
@@ -189,6 +223,8 @@ function __AsepriteClassFile() constructor
             frameArray[_i + _fromFrame].SaveAs(string_replace_all(_pathPattern, "#", _i));
             ++_i;
         }
+        
+        return self;
     }
     
     static Destroy = function()
