@@ -144,7 +144,7 @@ function __AsepriteClassFrame() constructor
     {
         __fileStruct = _fileStruct;
         
-        var _hasUUIDs         = __fileStruct.hasUUIDs;
+        var _hasUUIDs         = __fileStruct.__hasUUIDs;
         var _paletteArray     = __fileStruct.paletteArray;
         var _paletteNameArray = __fileStruct.paletteNameArray;
         

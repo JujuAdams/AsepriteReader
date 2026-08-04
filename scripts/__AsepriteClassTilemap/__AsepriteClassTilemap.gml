@@ -1,4 +1,12 @@
 /// The constructed struct has the following public read-only variables:
+/// `.width`
+/// `.height`
+/// `.bitsPerTile`
+/// `.bitmask`
+/// `.bitmaskXFlip`
+/// `.bitmaskYFlip`
+/// `.bitmaskDiag`
+/// `.tileBuffer`
 /// `.userData`
 
 function __AsepriteClassTilemap() constructor
