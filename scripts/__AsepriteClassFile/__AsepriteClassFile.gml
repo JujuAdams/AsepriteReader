@@ -194,21 +194,7 @@ function __AsepriteClassFile() constructor
             __AsepriteError($"Slice \"{_sliceName}\" not found");
         }
         
-        var _frameStruct = frameArray[max(0, _frame) mod array_length(frameArray)];
-        if (_sliceStruct.flags & 0b01)
-        {
-            with(_sliceStruct.keyArray[0])
-            {
-                _frameStruct.DrawPart(xOrigin, yOrigin, width, height, _x, _y);
-            }
-        }
-        else
-        {
-            with(_sliceStruct.keyArray[0])
-            {
-                _frameStruct.DrawPart(xOrigin, yOrigin, width, height, _x, _y);
-            }
-        }
+        _sliceStruct.Draw(_frame, _x, _y);
     }
     
     static DrawExt = function(_frame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
@@ -377,6 +363,16 @@ function __AsepriteClassFile() constructor
         return _output;
     }
     
+    static GetTagNames = function()
+    {
+        return struct_get_names(tagDict);
+    }
+    
+    static GetSliceNames = function()
+    {
+        return struct_get_names(sliceDict);
+    }
+    
     static Render = function(_keepSurfaces = true)
     {
         var _i = 0;
@@ -390,6 +386,13 @@ function __AsepriteClassFile() constructor
         repeat(array_length(frameArray))
         {
             frameArray[_i].__Render(paletteArray, transparentIndex, _keepSurfaces);
+            ++_i;
+        }
+        
+        var _i = 0;
+        repeat(array_length(sliceArray))
+        {
+            sliceArray[_i].__Render(frameArray, width, height);
             ++_i;
         }
         
@@ -443,6 +446,13 @@ function __AsepriteClassFile() constructor
         repeat(array_length(frameArray))
         {
             frameArray[_i].__Destroy();
+            ++_i;
+        }
+        
+        var _i = 0;
+        repeat(array_length(sliceArray))
+        {
+            sliceArray[_i].__Destroy();
             ++_i;
         }
     }
