@@ -34,12 +34,12 @@ function __AsepriteClassSlice() constructor
         return keyArray[0].GetSurface(_frame);
     }
     
-    static __Render = function(_frameArray, _canvasWidth, _canvasHeight)
+    static __Render = function(_frameArray, _canvasWidth, _canvasHeight, _keepSurfaces)
     {
         var _i = 0;
         repeat(array_length(keyArray))
         {
-            keyArray[_i].__Render(_frameArray, _canvasWidth, _canvasHeight);
+            keyArray[_i].__Render(_frameArray, _canvasWidth, _canvasHeight, _keepSurfaces);
             ++_i;
         }
     }

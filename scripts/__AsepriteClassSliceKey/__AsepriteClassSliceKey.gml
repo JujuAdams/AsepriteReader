@@ -43,19 +43,75 @@ function __AsepriteClassSliceKey() constructor
         }
     }
     
-    static __DrawExt = function(_frame, _x, _y, _xScale, _yScale, _angle, _blend, _alpha)
+    static __DrawExt = function(_frame, _drawX0, _drawY0, _xScale, _yScale, _angle, _blend, _alpha)
     {
         var _surface = GetSurface(max(0, _frame) mod array_length(__bufferArray));
         if (surface_exists(_surface))
         {
             if (xCenter == undefined) //Not a nineslice
             {
-                draw_surface_ext(_surface, _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+                draw_surface_ext(_surface, _drawX0, _drawY0, _xScale, _yScale, _angle, _blend, _alpha);
             }
             else
             {
-                //TODO
-                draw_surface_ext(_surface, _x, _y, _xScale, _yScale, _angle, _blend, _alpha);
+                draw_surface_ext(_surface, _drawX0, _drawY0, _xScale, _yScale, _angle, _blend, _alpha);
+                
+                var _drawW = _xScale*width;
+                var _drawH = _yScale*height;
+                
+                var _surfX0 = xOrigin;
+                var _surfX1 = xCenter;
+                var _surfX2 = _surfX1 + centerWidth;
+                var _surfX3 = xOrigin + width;
+                
+                var _surfY0 = yOrigin;
+                var _surfY1 = yCenter;
+                var _surfY2 = _surfY1 + centerHeight;
+                var _surfY3 = yOrigin + height;
+                
+                var _surfW01 = _surfX1 - _surfX0;
+                var _surfW12 = _surfX2 - _surfX1;
+                var _surfW23 = _surfX3 - _surfX2;
+                
+                var _surfH01 = _surfY1 - _surfY0;
+                var _surfH12 = _surfY2 - _surfY1;
+                var _surfH23 = _surfY3 - _surfY2;
+                
+                var _drawX1 = _drawX0 + _surfW01;
+                var _drawX2 = _drawX0 + _drawW - _surfW23;
+                
+                var _drawY1 = _drawY0 + _surfH01;
+                var _drawY2 = _drawY0 + _drawH - _surfH23;
+                
+                var _scaleX12 = (_drawW - (_surfW01 + _surfW23)) / _surfW12;
+                var _scaleY12 = (_drawH - (_surfH01 + _surfH23)) / _surfH12;
+                
+                //Top-left
+                draw_surface_part_ext(_surface, _surfX0, _surfY0, _surfW01, _surfH01, _drawX0, _drawY0, 1, 1, _blend, _alpha);
+                
+                //Top
+                draw_surface_part_ext(_surface, _surfX1, _surfY0, _surfW12, _surfH01, _drawX1, _drawY0, _scaleX12, 1, _blend, _alpha);
+                
+                //Top-right
+                draw_surface_part_ext(_surface, _surfX2, _surfY0, _surfW23, _surfH01, _drawX2, _drawY0, 1, 1, _blend, _alpha);
+                
+                //Left
+                draw_surface_part_ext(_surface, _surfX0, _surfY1, _surfW01, _surfH12, _drawX0, _drawY1, 1, _scaleY12, _blend, _alpha);
+                
+                //Centre
+                draw_surface_part_ext(_surface, _surfX1, _surfY1, _surfW12, _surfH12, _drawX1, _drawY1, _scaleX12, _scaleY12, _blend, _alpha);
+                
+                //Right
+                draw_surface_part_ext(_surface, _surfX2, _surfY1, _surfW23, _surfH12, _drawX2, _drawY1, 1, _scaleY12, _blend, _alpha);
+                
+                //Bottom-left
+                draw_surface_part_ext(_surface, _surfX0, _surfY2, _surfW01, _surfH23, _drawX0, _drawY2, 1, 1, _blend, _alpha);
+                
+                //Bottom
+                draw_surface_part_ext(_surface, _surfX1, _surfY2, _surfW12, _surfH23, _drawX1, _drawY2, _scaleX12, 1, _blend, _alpha);
+                
+                //Bottom-right
+                draw_surface_part_ext(_surface, _surfX2, _surfY2, _surfW23, _surfH23, _drawX2, _drawY2, 1, 1, _blend, _alpha);
             }
         }
     }
@@ -89,7 +145,7 @@ function __AsepriteClassSliceKey() constructor
         return _surface;
     }
     
-    static __Render = function(_frameArray, _canvasWidth, _canvasHeight)
+    static __Render = function(_frameArray, _canvasWidth, _canvasHeight, _keepSurfaces)
     {
         if (is_array(__bufferArray)) return;
         
@@ -114,6 +170,10 @@ function __AsepriteClassSliceKey() constructor
             buffer_copy_stride(_frameStruct.buffer, _frameOffset, _sliceStride, _lineStride, _pixelHeight,
                                _sliceBuffer, 0, _sliceStride);
             
+            if (_keepSurfaces)
+            {
+                GetSurface(_i);
+            }
             
             ++_i;
         }
